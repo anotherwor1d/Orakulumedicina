@@ -1,0 +1,285 @@
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ORAKULU MEDICINA</title>
+    <style>
+        body {
+            background-color: #111425; 
+            color: #e0e0e0;
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        
+        .terminal {
+            width: 100%;
+            max-width: 800px;
+            background: #1e1e1e;
+            padding: 30px;
+            border-radius: 8px;
+            border: 1px solid #333;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
+            text-align: center;
+        }
+        
+        .header {
+            margin-bottom: 30px;
+        }
+        
+        .logo {
+            stroke: #d5405b; 
+            fill: none;
+            stroke-width: 2;
+            margin-bottom: 20px;
+        }
+
+        .oraculo-medicina {
+            fill: none;
+            stroke: #893046; 
+            stroke-width: 2;
+        }
+
+        input {
+            width: 100%;
+            background: #282828;
+            border: 1px solid #444;
+            color: #e0e0e0;
+            padding: 15px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 16px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+
+        .report {
+            background-color: #292929;
+            border: 1px solid #555;
+            padding: 25px;
+            margin-top: 20px;
+            display: none;
+            border-radius: 8px;
+        }
+
+        .blink {
+            animation: blink 1s infinite;
+            color: #d5405b; 
+        }
+
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+
+        .loading {
+            display: none;
+            margin: 20px 0;
+            color: #d5405b; 
+        }
+
+        .section {
+            margin: 15px 0;
+            padding-left: 20px;
+            text-align: left;
+        }
+
+        .label {
+            color: #d5405b; 
+            font-weight: bold;
+        }
+
+        .lethality-meter {
+            margin: 10px 0;
+            height: 20px;
+            border: 1px solid #888;
+            border-radius: 10px;
+            background: #444;
+        }
+
+        .lethality-fill {
+            height: 100%;
+            background: #d5405b; 
+            border-radius: 10px 0 0 10px;
+            width: 0%;
+            transition: width 1s ease-in-out;
+        }
+
+        .reset-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #d5405b;
+            color: #e0e0e0;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .reset-button:hover {
+            background-color: #c0344b;
+        }
+    </style>
+</head>
+<body>
+    <div class="terminal">
+        <div class="header">
+            <svg class="logo" width="200" height="200" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="40" fill="none" class="oraculo-medicina"/>
+                <polygon points="50,10 30,70 70,70" fill="none" stroke="#ffffff" stroke-width="2"/>
+                <circle cx="50" cy="50" r="8" fill="#ffffff"/>
+                <line x1="50" y1="42" x2="50" y2="58" stroke="#893046" stroke-width="2"/>
+                <line x1="42" y1="50" x2="58" y2="50" stroke="#893046" stroke-width="2"/>
+                <circle cx="50" cy="50" r="25" fill="none" stroke="#ffffff" stroke-width="0.5" stroke-dasharray="2 6"/>
+                <circle cx="50" cy="50" r="30" fill="none" stroke="#ffffff" stroke-width="0.5" stroke-dasharray="2 9"/>
+            </svg>
+            <h1>ORAKULU MEDICINA</h1>
+            <p class="blink">&gt;_ INSIRA PAR&#xc2;METROS DA DOEN&#xc7;A ...</p>
+        </div>
+
+        <input type="text" id="diseaseInput" placeholder="Digite a descri&#xe7;&#xe3;o da doen&#xe7;a/v&#xed;rus/dist&#xfa;rbio...">
+        
+        <div class="loading" id="loading">
+            Processando dados... <span class="blink">|</span>
+        </div>
+
+        <div class="report" id="report">
+            <div class="section">
+                <span class="label">ID DO PACIENTE:</span>
+                <span id="patientId"></span>
+            </div>
+            <div class="section">
+                <span class="label">CLASSIFICA&#xc7;&#xc3;O DA DOEN&#xc7;A:</span>
+                <span id="illnessName"></span>
+            </div>
+            <div class="section">
+                <span class="label">DESCRI&#xc7;&#xc3;O DO PACIENTE:</span>
+                <div id="patientDesc"></div>
+            </div>
+            <div class="section">
+                <span class="label">SINTOMAS:</span>
+                <div id="symptoms"></div>
+            </div>
+            <div class="section">
+                <span class="label">CAUSAS:</span>
+                <div id="causes"></div>
+            </div>
+            <div class="section">
+                <span class="label">AVALIA&#xc7;&#xc3;O DE LETALIDADE:</span>
+                <div id="lethality"></div>
+                <div class="lethality-meter">
+                    <div class="lethality-fill" id="lethalityMeter"></div>
+                </div>
+            </div>
+            <div class="section">
+                <span class="label">PROTOCOLO DE TRATAMENTO:</span>
+                <div id="treatment"></div>
+            </div>
+            <div class="section">
+                <span class="label">ORIGEM:</span>
+                <div id="origin"></div>
+            </div>
+        </div>
+
+        <button class="reset-button" onclick="resetSession()">Limpar Sess&#xe3;o</button>
+    </div>
+
+    <script>async function generateMedicalReport(prompt) {
+  try {
+    if (prompt.toLowerCase().includes('skibidi toilet')) {
+      return {
+        patientId: "SKIBIDI TOILET",
+        illnessName: "SKIBIDI TOILET",
+        patientDescription: "SKIBIDI TOILET",
+        symptoms: ["SKIBIDI TOILET", "SKIBIDI TOILET", "SKIBIDI TOILET"],
+        causes: ["SKIBIDI TOILET", "SKIBIDI TOILET"],
+        lethality: {
+          rating: "SKIBIDI TOILET",
+          percentage: 100
+        },
+        treatment: "SKIBIDI TOILET",
+        origin: "SKIBIDI TOILET"
+      };
+    }
+    const response = await fetch('/api/ai_completion', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify({
+        prompt: `Gere um relatório médico detalhado com base na seguinte descrição da doença: "${prompt}".
+                                            
+                        <typescript-interface>
+                        interface MedicalReport {
+                            patientId: string;
+                            illnessName: string;
+                            patientDescription: string;
+                            symptoms: string[];
+                            causes: string[];
+                            lethality: {
+                                rating: string;
+                                percentage: number;
+                            };
+                            treatment: string;
+                            origin: string;
+                        }
+                        </typescript-interface>
+                        
+                        <example>
+                        {
+                            "patientId": "P-2023-0451",
+                            "illnessName": "Síndrome de Ressonância Digital Crônica",
+                            "patientDescription": "Masculino, 34 anos, desenvolvedor de software com sensibilidade eletromagnética incomum",
+                            "symptoms": ["Formigamento persistente nas pontas dos dedos", "Enxaquecas induzidas por tela", "Alucinações de código"],
+                            "causes": ["Exposição prolongada a campos eletromagnéticos", "Predisposição genética à sensibilidade EM"],
+                            "lethality": {
+                                "rating": "Improvável",
+                                "percentage": 15
+                            },
+                            "treatment": "Períodos regulares de detox digital, terapia especializada de bloqueio EMF",
+                            "origin": "Campus de Tecnologia do Vale do Silício, Edifício 7"
+                        }
+                        </example>`,
+        data: prompt
+      })
+    });
+    return await response.json();
+  } catch (error) {
+    console.error('Erro:', error);
+    return null;
+  }
+}
+document.getElementById('diseaseInput').addEventListener('keypress', async function (e) {
+  if (e.key === 'Enter') {
+    const prompt = this.value;
+    const loading = document.getElementById('loading');
+    const report = document.getElementById('report');
+    loading.style.display = 'block';
+    report.style.display = 'none';
+    const medicalReport = await generateMedicalReport(prompt);
+    if (medicalReport) {
+      document.getElementById('patientId').textContent = medicalReport.patientId;
+      document.getElementById('illnessName').textContent = medicalReport.illnessName;
+      document.getElementById('patientDesc').textContent = medicalReport.patientDescription;
+      document.getElementById('symptoms').innerHTML = medicalReport.symptoms.map(s => `• ${s}`).join('<br>');
+      document.getElementById('causes').innerHTML = medicalReport.causes.map(c => `• ${c}`).join('<br>');
+      document.getElementById('lethality').textContent = medicalReport.lethality.rating;
+      document.getElementById('lethalityMeter').style.width = `${medicalReport.lethality.percentage}%`;
+      document.getElementById('treatment').textContent = medicalReport.treatment;
+      document.getElementById('origin').textContent = medicalReport.origin;
+      loading.style.display = 'none';
+      report.style.display = 'block';
+    }
+  }
+});
+function resetSession() {
+  document.getElementById('diseaseInput').value = '';
+  document.getElementById('report').style.display = 'none';
+  document.getElementById('loading').style.display = 'none';
+}</script>
+</body>
+</html>
